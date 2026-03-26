@@ -1,15 +1,21 @@
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 if (!API) {
-  throw new Error("NEXT_PUBLIC_API_URL manquant (mets-le dans .env.local puis relance npm run dev)");
+  throw new Error(
+    "NEXT_PUBLIC_API_URL manquant (mets-le dans .env.local puis relance npm run dev)"
+  );
 }
 
-type ApiErrorShape = { error?: string; message?: string };
+type ApiErrorShape = {
+  error?: string;
+  message?: string;
+};
 
 function safeJsonParse(text: string): unknown {
   if (!text) return null;
+
   try {
-    return JSON.parse(text) as unknown;
+    return JSON.parse(text);
   } catch {
     return text;
   }
@@ -20,12 +26,12 @@ export async function apiFetch<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const res = await fetch(`${API}${path}`, {
-    ...options,
+    credentials: "include", // 🔑 permet d'envoyer le cookie JWT
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-    credentials: "include", // ✅ cookie httpOnly
+    ...options,
   });
 
   const text = await res.text();
@@ -36,7 +42,10 @@ export async function apiFetch<T>(
       const e = parsed as ApiErrorShape;
       throw new Error(e.error || e.message || `Erreur API ${res.status}`);
     }
-    throw new Error(typeof parsed === "string" ? parsed : `Erreur API ${res.status}`);
+
+    throw new Error(
+      typeof parsed === "string" ? parsed : `Erreur API ${res.status}`
+    );
   }
 
   return parsed as T;
