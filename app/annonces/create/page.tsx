@@ -8,13 +8,11 @@ import Button from "@/components/Button";
 import { apiFetch } from "@/lib/api";
 
 export default function CreateAnnoncePage() {
-
   const router = useRouter();
 
-  const [type, setType] = useState("actualite");
+  const [type, setType] = useState("info");
   const [titre, setTitre] = useState("");
-  const [resume, setResume] = useState("");
-  const [contenu, setContenu] = useState("");
+  const [message, setMessage] = useState("");
   const [categorie, setCategorie] = useState("");
   const [date, setDate] = useState("");
 
@@ -28,17 +26,15 @@ export default function CreateAnnoncePage() {
     setMsg(null);
 
     try {
-
       await apiFetch("/annonces", {
         method: "POST",
         body: JSON.stringify({
           type,
           titre,
-          resume,
-          contenu,
+          message,
           categorie,
-          date
-        })
+          date_debut: date || null
+        }),
       });
 
       setMsg("Annonce créée avec succès");
@@ -48,153 +44,117 @@ export default function CreateAnnoncePage() {
       }, 1000);
 
     } catch (err: unknown) {
-
-  if (err instanceof Error) {
-    setMsg(err.message);
-  } else {
-    setMsg("Erreur inconnue");
-  }
-
-}
+      if (err instanceof Error) {
+        setMsg(err.message);
+      } else {
+        setMsg("Erreur inconnue");
+      }
+    }
 
     setLoading(false);
   }
 
   return (
-
     <PageLayout
       title="Créer une annonce"
       subtitle="Publier une actualité, une offre ou un événement"
     >
+      <div className="flex justify-center">
 
-      <Card className="max-w-xl mx-auto p-6">
+        <Card className="w-full max-w-xl p-6">
 
-        <form onSubmit={submit} className="space-y-4">
+          <form onSubmit={submit} className="space-y-4">
 
-          {/* TYPE */}
+            {/* TYPE */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                {"Type d'annonce"}
+              </label>
 
-          <div>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              >
+                <option value="info">Actualité</option>
+                <option value="alerte">Offre</option>
+                <option value="evenement">Événement</option>
+              </select>
+            </div>
 
-            <label className="block text-sm font-semibold mb-1">
-              Type dannonce
-            </label>
+            {/* TITRE */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Titre
+              </label>
 
-            <select
-              value={type}
-              onChange={(e)=>setType(e.target.value)}
-              className="w-full border rounded-lg p-2"
-            >
-              <option value="actualite">Actualité</option>
-              <option value="offre">Offre</option>
-              <option value="evenement">Événement</option>
-            </select>
+              <input
+                value={titre}
+                onChange={(e) => setTitre(e.target.value)}
+                required
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              />
+            </div>
 
-          </div>
+            {/* MESSAGE */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Message
+              </label>
 
-          {/* TITRE */}
+              <textarea
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                required
+                rows={5}
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              />
+            </div>
 
-          <div>
+            {/* CATEGORIE */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Catégorie
+              </label>
 
-            <label className="block text-sm font-semibold mb-1">
-              Titre
-            </label>
+              <input
+                value={categorie}
+                onChange={(e) => setCategorie(e.target.value)}
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              />
+            </div>
 
-            <input
-              value={titre}
-              onChange={(e)=>setTitre(e.target.value)}
-              required
-              className="w-full border rounded-lg p-2"
-            />
+            {/* DATE */}
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Date
+              </label>
 
-          </div>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              />
+            </div>
 
-          {/* RESUME */}
+            {/* BUTTON */}
+            <Button disabled={loading}>
+              {loading ? "Publication..." : "Publier l'annonce"}
+            </Button>
 
-          <div>
+            {/* MESSAGE */}
+            {msg && (
+              <p className="text-sm text-green-600">
+                {msg}
+              </p>
+            )}
 
-            <label className="block text-sm font-semibold mb-1">
-              Résumé
-            </label>
+          </form>
 
-            <input
-              value={resume}
-              onChange={(e)=>setResume(e.target.value)}
-              required
-              className="w-full border rounded-lg p-2"
-            />
+        </Card>
 
-          </div>
-
-          {/* CONTENU */}
-
-          <div>
-
-            <label className="block text-sm font-semibold mb-1">
-              Contenu
-            </label>
-
-            <textarea
-              value={contenu}
-              onChange={(e)=>setContenu(e.target.value)}
-              rows={5}
-              className="w-full border rounded-lg p-2"
-            />
-
-          </div>
-
-          {/* CATEGORIE */}
-
-          <div>
-
-            <label className="block text-sm font-semibold mb-1">
-              Catégorie
-            </label>
-
-            <input
-              value={categorie}
-              onChange={(e)=>setCategorie(e.target.value)}
-              className="w-full border rounded-lg p-2"
-            />
-
-          </div>
-
-          {/* DATE */}
-
-          <div>
-
-            <label className="block text-sm font-semibold mb-1">
-              Date
-            </label>
-
-            <input
-              type="date"
-              value={date}
-              onChange={(e)=>setDate(e.target.value)}
-              className="w-full border rounded-lg p-2"
-            />
-
-          </div>
-
-          {/* BOUTON */}
-
-          <Button disabled={loading}>
-
-            {loading ? "Publication..." : "Publier l'annonce"}
-
-          </Button>
-
-          {msg && (
-            <p className="text-sm text-green-600">
-              {msg}
-            </p>
-          )}
-
-        </form>
-
-      </Card>
-
+      </div>
     </PageLayout>
-
   );
-
 }

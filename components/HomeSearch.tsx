@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
 import { offres, actualites, evenements } from "@/data/mock";
-import { normalize, parseFRDate } from "@/lib/sortHelpers";
+import { normalize, parseDateSafe } from "@/lib/sortHelpers";
 
 type Scope = "tout" | "offres" | "actualites" | "evenements";
 type Sort = "pertinence" | "date_desc" | "alpha_asc";
@@ -67,7 +67,7 @@ export default function HomeSearch() {
       return [...all].sort((a, b) => a.title.localeCompare(b.title));
     }
     if (sort === "date_desc") {
-      return [...all].sort((a, b) => parseFRDate(b.date) - parseFRDate(a.date));
+      return [...all].sort((a, b) => parseDateSafe(b.date) - parseDateSafe(a.date));
     }
     // pertinence simple = ordre naturel filtré (ok pour une démo)
     return all;

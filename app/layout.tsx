@@ -30,8 +30,9 @@ function NavLink({ href, label }: { href: string; label: string }) {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <AuthProvider>
-        <body className="min-h-screen text-gray-900 bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.18),transparent_55%),radial-gradient(900px_circle_at_90%_10%,rgba(168,85,247,0.18),transparent_50%),linear-gradient(to_bottom,#f8fafc,#ffffff)]">
+      <body className="min-h-screen text-gray-900 bg-[radial-gradient(1200px_circle_at_20%_0%,rgba(59,130,246,0.18),transparent_55%),radial-gradient(900px_circle_at_90%_10%,rgba(168,85,247,0.18),transparent_50%),linear-gradient(to_bottom,#f8fafc,#ffffff)]">
+
+        <AuthProvider>
 
           <header className="sticky top-0 z-50 border-b border-white/40 bg-white/35 backdrop-blur-xl">
             <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-4">
@@ -44,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </span>
               </Link>
 
-              {/* Navigation desktop */}
+              {/* Navigation */}
               <nav className="hidden md:flex items-center gap-2">
                 {navLinks.map((l) => (
                   <NavLink key={l.href} href={l.href} label={l.label} />
@@ -69,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </footer>
 
-          {/* Toast notifications */}
+          {/* Toast */}
           <Toaster
             position="top-right"
             gutter={12}
@@ -83,8 +84,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             }}
           />
 
-        </body>
-      </AuthProvider>
+        </AuthProvider>
+
+      </body>
     </html>
   );
 }

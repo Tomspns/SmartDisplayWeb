@@ -15,11 +15,11 @@ export type User = {
 export type Annonce = {
   id_contenu: number;
   titre: string;
-  resume: string;
-  contenu?: string;
-  categorie: string;
+  message: string;
   type: string;
-  date_publication: string;
+  date_debut: string;
+  nom?: string;
+  prenom?: string;
 };
 
 // =============================

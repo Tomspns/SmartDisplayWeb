@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { me, login as apiLogin, logout as apiLogout, User } from "./authApi";
+import { me, login as apiLogin, logout as apiLogout, User, MeResponse } from "./authApi";
 
 type AuthContextType = {
   user: User | null;
@@ -18,14 +18,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔥 FIX PRINCIPAL ICI
   async function refreshUser() {
-
     try {
-
       const data = await me();
 
-      if ("user" in data) {
-        setUser(data.user);
+      // sécurisation du type (évite erreur TS + crash)
+      if (data && typeof data === "object" && "user" in data) {
+        setUser((data as { user: User }).user);
       } else {
         setUser(null);
       }
@@ -33,37 +33,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setUser(null);
     }
-
   }
 
   async function login(email: string, password: string) {
-
     await apiLogin({ email, password });
-
     await refreshUser();
-
   }
 
   async function logout() {
-
     await apiLogout();
-
     setUser(null);
-
   }
 
   useEffect(() => {
-
     async function init() {
-
       await refreshUser();
-
       setLoading(false);
-
     }
 
     init();
-
   }, []);
 
   return (
@@ -71,11 +59,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-
 }
 
 export function useAuth() {
-
   const context = useContext(AuthContext);
 
   if (!context) {
@@ -83,5 +69,4 @@ export function useAuth() {
   }
 
   return context;
-
 }
