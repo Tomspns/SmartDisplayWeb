@@ -1,52 +1,28 @@
-const API = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = "http://20.19.169.91:8080";
 
-if (!API) {
-  throw new Error(
-    "NEXT_PUBLIC_API_URL manquant (mets-le dans .env.local puis relance npm run dev)"
-  );
-}
-
-type ApiErrorShape = {
-  error?: string;
-  message?: string;
-};
-
-function safeJsonParse(text: string): unknown {
-  if (!text) return null;
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return text;
-  }
-}
-
-export async function apiFetch<T>(
+export async function apiFetch<T = unknown>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const res = await fetch(`${API}${path}`, {
-    credentials: "include", // 🔑 permet d'envoyer le cookie JWT
+
+  const token =
+    typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null;
+
+  const res = await fetch(`${API_URL}${path}`, {
+    ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
-    ...options,
   });
 
-  const text = await res.text();
-  const parsed = safeJsonParse(text);
-
   if (!res.ok) {
-    if (parsed && typeof parsed === "object") {
-      const e = parsed as ApiErrorShape;
-      throw new Error(e.error || e.message || `Erreur API ${res.status}`);
-    }
-
-    throw new Error(
-      typeof parsed === "string" ? parsed : `Erreur API ${res.status}`
-    );
+    const text = await res.text();
+    throw new Error(text || "Erreur API");
   }
 
-  return parsed as T;
+  return res.json();
 }
