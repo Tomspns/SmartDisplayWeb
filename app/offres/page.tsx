@@ -20,7 +20,7 @@ export default function OffresPage() {
     <PageLayout title="Offres">
       <div className="grid gap-4">
         {data.map((o) => (
-          <Link key={o.id_contenu} href={`/actualites/${o.id_contenu}`}>
+          <Link key={o.id_contenu} href={`/offres/${o.id_contenu}`}>
             <Card>
               <Badge tone="orange">Offre</Badge>
               <h2>{o.titre}</h2>

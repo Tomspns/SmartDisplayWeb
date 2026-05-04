@@ -20,11 +20,12 @@ export default function EvenementsPage() {
     <PageLayout title="Événements">
       <div className="grid gap-4">
         {data.map((e) => (
-          <Link key={e.id_contenu} href={`/actualites/${e.id_contenu}`}>
+          // ✅ FIX ICI
+          <Link key={e.id_contenu} href={`/evenements/${e.id_contenu}`}>
             <Card>
               <Badge tone="purple">Événement</Badge>
-              <h2>{e.titre}</h2>
-              <p>{e.message}</p>
+              <h2 className="font-bold text-lg">{e.titre}</h2>
+              <p className="text-gray-600">{e.message}</p>
             </Card>
           </Link>
         ))}

@@ -1,35 +1,38 @@
-"use client";
-
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import { notFound } from "next/navigation";
 import PageLayout from "@/components/PageLayout";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
-import { getAnnonces, Annonce } from "@/lib/authApi";
+import { apiFetch } from "@/lib/api";
+import { Annonce } from "@/lib/authApi";
 
-export default function OffresPage() {
-  const [offres, setOffres] = useState<Annonce[]>([]);
+type Params = { id: string };
 
-  useEffect(() => {
-    (async () => {
-      const data = await getAnnonces();
-      setOffres(data.filter((a) => a.type === "alerte")); // ✅ OFFRES
-    })();
-  }, []);
+export default async function Page({ params }: { params: Promise<Params> }) {
+  const p = await params; // ✅ FIX
+  const id = Number(p.id);
+
+  if (!id) return notFound();
+
+  let annonce: Annonce;
+
+  try {
+    annonce = await apiFetch(`/annonces/${id}`);
+  } catch {
+    return notFound();
+  }
+
+  // ⚠️ adapte si ton type est différent en base
+  if (annonce.type !== "alerte") return notFound();
 
   return (
-    <PageLayout title="Offres" subtitle="Offres disponibles">
-      <div className="grid gap-4">
-        {offres.map((o) => (
-          <Link key={o.id_contenu} href={`/actualites/${o.id_contenu}`}>
-            <Card>
-              <Badge tone="orange">Offre</Badge>
-              <h2 className="font-bold text-lg mt-2">{o.titre}</h2>
-              <p className="text-gray-600">{o.message}</p>
-            </Card>
-          </Link>
-        ))}
-      </div>
+    <PageLayout
+      title={annonce.titre}
+      subtitle={`Publié le ${new Date(annonce.date_debut).toLocaleDateString()}`}
+      right={<Badge tone="orange">Offre</Badge>}
+    >
+      <Card>
+        <p>{annonce.message}</p>
+      </Card>
     </PageLayout>
   );
 }

@@ -1,5 +1,9 @@
 import { apiFetch } from "./api";
 
+// =============================
+// TYPES
+// =============================
+
 export type User = {
   id_user: number;
   nom: string;
@@ -7,6 +11,24 @@ export type User = {
   email: string;
   id_role: number;
 };
+
+export type Annonce = {
+  id_contenu: number;
+  titre: string;
+  message: string;
+  type: string;
+  date_debut: string;
+  nom?: string;
+  prenom?: string;
+};
+
+export type MeResponse = {
+  user: User;
+};
+
+// =============================
+// AUTH
+// =============================
 
 export async function register(input: {
   nom: string;
@@ -35,7 +57,7 @@ export async function login(input: {
   return res;
 }
 
-export async function me() {
+export async function me(): Promise<MeResponse> {
   return apiFetch("/me", {
     method: "GET",
   });
@@ -45,5 +67,32 @@ export async function logout() {
   localStorage.removeItem("token");
   return apiFetch("/auth/logout", {
     method: "POST",
+  });
+}
+
+// =============================
+// PROFIL (🔥 AJOUTÉ)
+// =============================
+
+export async function updateProfile(data: {
+  nom: string;
+  prenom: string;
+  email: string;
+  telephone?: string;
+  dateNaissance?: string;
+}) {
+  return apiFetch("/users/me", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+// =============================
+// ANNONCES
+// =============================
+
+export async function getAnnonces(): Promise<Annonce[]> {
+  return apiFetch("/annonces", {
+    method: "GET",
   });
 }
