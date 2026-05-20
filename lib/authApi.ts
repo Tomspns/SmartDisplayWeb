@@ -54,6 +54,7 @@ export async function login(input: {
   });
 
   localStorage.setItem("token", res.token);
+
   return res;
 }
 
@@ -65,13 +66,14 @@ export async function me(): Promise<MeResponse> {
 
 export async function logout() {
   localStorage.removeItem("token");
+
   return apiFetch("/auth/logout", {
     method: "POST",
   });
 }
 
 // =============================
-// PROFIL (🔥 AJOUTÉ)
+// PROFIL
 // =============================
 
 export async function updateProfile(data: {
@@ -95,4 +97,16 @@ export async function getAnnonces(): Promise<Annonce[]> {
   return apiFetch("/annonces", {
     method: "GET",
   });
+}
+
+// =============================
+// DELETE CONTENU
+// =============================
+
+export async function deleteContenu(id: number) {
+
+  return apiFetch(`/contenus/${id}`, {
+    method: "DELETE",
+  });
+
 }
