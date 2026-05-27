@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
+
 import PageLayout from "@/components/PageLayout";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
+
 import { apiFetch } from "@/lib/api";
 import { Annonce } from "@/lib/authApi";
-import Link from "next/link";
+
 import DeleteButton from "./DeleteButton";
 
 type Params = {
@@ -21,13 +24,17 @@ export default async function Page({
 
   const id = Number(p.id);
 
-  if (!id) return notFound();
+  if (!id) {
+    return notFound();
+  }
 
   let annonce: Annonce;
 
   try {
 
-    annonce = await apiFetch(`/annonces/${id}`);
+    annonce = await apiFetch(
+      `/annonces/${id}`
+    );
 
   } catch {
 
@@ -35,50 +42,88 @@ export default async function Page({
 
   }
 
-  if (annonce.type !== "alerte") {
+  // ✅ TYPE CORRIGÉ
+
+  if (annonce.type !== "offre") {
     return notFound();
   }
 
   return (
+
     <PageLayout
       title={annonce.titre}
       subtitle={`Publié le ${new Date(
         annonce.date_debut
       ).toLocaleDateString()}`}
-      right={<Badge tone="orange">Offre</Badge>}
+      right={
+        <Badge tone="orange">
+          Offre
+        </Badge>
+      }
     >
 
-      <div className="mb-6 flex items-center justify-between">
+      <div
+        className="
+          mb-6 flex items-center
+          justify-between
+        "
+      >
 
         <div>
 
           <Link
             href="/offres"
-            className="text-sm text-orange-600 hover:underline"
+            className="
+              text-sm text-orange-600
+              hover:underline
+            "
           >
             ← Retour aux offres
           </Link>
 
           {annonce.nom && (
+
             <p className="mt-2 text-sm text-gray-500">
+
               Par {annonce.prenom} {annonce.nom}
+
             </p>
+
           )}
 
         </div>
 
-        <DeleteButton id={annonce.id_contenu} />
+        <DeleteButton
+          id={annonce.id_contenu}
+        />
 
       </div>
 
-      <Card className="rounded-2xl border border-orange-100 bg-white p-6 shadow-xl md:p-8">
+      <Card
+        className="
+          rounded-2xl border
+          border-orange-100
+          bg-white p-6
+          shadow-xl md:p-8
+        "
+      >
 
-        <p className="whitespace-pre-line text-lg leading-relaxed text-gray-700">
+        <p
+          className="
+            whitespace-pre-line
+            text-lg leading-relaxed
+            text-gray-700
+          "
+        >
+
           {annonce.message}
+
         </p>
 
       </Card>
 
     </PageLayout>
+
   );
+
 }

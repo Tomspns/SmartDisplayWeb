@@ -1,141 +1,253 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
-import { offres, actualites, evenements } from "@/data/mock";
-import { normalize, parseDateSafe } from "@/lib/sortHelpers";
 
-type Scope = "tout" | "offres" | "actualites" | "evenements";
-type Sort = "pertinence" | "date_desc" | "alpha_asc";
+import { apiFetch } from "@/lib/api";
+
+type Contenu = {
+  id_contenu: number;
+  titre: string;
+  message: string;
+  type: string;
+};
 
 export default function HomeSearch() {
-  const [q, setQ] = useState("");
-  const [scope, setScope] = useState<Scope>("tout");
-  const [sort, setSort] = useState<Sort>("pertinence");
+
+  const [query, setQuery] =
+    useState("");
+
+  const [contenus, setContenus] =
+    useState<Contenu[]>([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+
+    async function load() {
+
+      try {
+
+        const data =
+          await apiFetch<Contenu[]>("/annonces");
+
+        setContenus(data);
+
+      } catch (err) {
+
+        console.error(err);
+
+      } finally {
+
+        setLoading(false);
+
+      }
+
+    }
+
+    load();
+
+  }, []);
 
   const results = useMemo(() => {
-    const query = normalize(q);
-    if (!query) return [];
 
-    const inOffres =
-      scope === "tout" || scope === "offres"
-        ? offres
-            .map((o) => ({
-              kind: "offres" as const,
-              id: o.id,
-              title: o.titre,
-              subtitle: `${o.entreprise} • ${o.lieu}`,
-              date: "", // offres: pas de date dans ton mock
-              text: `${o.titre} ${o.entreprise} ${o.lieu} ${o.description} ${o.tags.join(" ")}`,
-              href: `/offres/${o.id}`,
-            }))
-        : [];
-
-    const inActus =
-      scope === "tout" || scope === "actualites"
-        ? actualites.map((a) => ({
-            kind: "actualites" as const,
-            id: a.id,
-            title: a.titre,
-            subtitle: `${a.categorie} • ${a.auteur}`,
-            date: a.date,
-            text: `${a.titre} ${a.resume} ${a.categorie} ${a.auteur} ${a.date}`,
-            href: `/actualites/${a.id}`,
-          }))
-        : [];
-
-    const inEvents =
-      scope === "tout" || scope === "evenements"
-        ? evenements.map((e) => ({
-            kind: "evenements" as const,
-            id: e.id,
-            title: e.titre,
-            subtitle: `${e.lieu} • ${e.heure}`,
-            date: e.date,
-            text: `${e.titre} ${e.resume} ${e.lieu} ${e.type} ${e.date} ${e.heure}`,
-            href: `/evenements/${e.id}`,
-          }))
-        : [];
-
-    const all = [...inOffres, ...inActus, ...inEvents]
-      .filter((x) => normalize(x.text).includes(query))
-      .slice(0, 20);
-
-    if (sort === "alpha_asc") {
-      return [...all].sort((a, b) => a.title.localeCompare(b.title));
+    if (!query.trim()) {
+      return [];
     }
-    if (sort === "date_desc") {
-      return [...all].sort((a, b) => parseDateSafe(b.date) - parseDateSafe(a.date));
+
+    const q = query.toLowerCase();
+
+    return contenus
+      .filter((c) => {
+
+        return (
+          c.titre.toLowerCase().includes(q)
+          ||
+          c.message.toLowerCase().includes(q)
+          ||
+          c.type.toLowerCase().includes(q)
+        );
+
+      })
+      .slice(0, 6);
+
+  }, [query, contenus]);
+
+  function getLink(item: Contenu) {
+
+    switch (item.type) {
+
+      case "actualite":
+        return `/actualites/${item.id_contenu}`;
+
+      case "offre":
+        return `/offres/${item.id_contenu}`;
+
+      case "evenement":
+        return `/evenements/${item.id_contenu}`;
+
+      default:
+        return "/";
+
     }
-    // pertinence simple = ordre naturel filtré (ok pour une démo)
-    return all;
-  }, [q, scope, sort]);
+
+  }
+
+  function getBadgeTone(type: string) {
+
+    switch (type) {
+
+      case "actualite":
+        return "blue";
+
+      case "offre":
+        return "orange";
+
+      case "evenement":
+        return "green";
+
+      default:
+        return "neutral";
+
+    }
+
+  }
 
   return (
-    <Card className="p-6 md:p-7">
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="flex-1">
-          <h2 className="text-xl font-extrabold tracking-tight">Recherche</h2>
-          <p className="text-sm text-gray-600 mt-1">
-            Trouve rapidement une offre, un événement ou une actualité.
+
+    <Card className="p-6 relative z-50 overflow-visible">
+
+      <div className="flex flex-col gap-4">
+
+        <div>
+
+          <h2 className="text-2xl font-extrabold tracking-tight">
+            Recherche rapide
+          </h2>
+
+          <p className="mt-1 text-gray-600">
+            Rechercher une actualité,
+            une offre ou un événement.
           </p>
+
         </div>
 
-        <div className="flex gap-2">
-          <select className="input md:w-48" value={scope} onChange={(e) => setScope(e.target.value as Scope)}>
-            <option value="tout">Tout</option>
-            <option value="offres">Offres</option>
-            <option value="actualites">Actualités</option>
-            <option value="evenements">Événements</option>
-          </select>
+        <div className="relative overflow-visible">
 
-          <select className="input md:w-56" value={sort} onChange={(e) => setSort(e.target.value as Sort)}>
-            <option value="pertinence">Tri : pertinence</option>
-            <option value="date_desc">Tri : date (récent)</option>
-            <option value="alpha_asc">Tri : A → Z</option>
-          </select>
-        </div>
-      </div>
+          <input
+            type="text"
+            placeholder="Rechercher..."
+            value={query}
+            onChange={(e) =>
+              setQuery(e.target.value)
+            }
+            className="
+              w-full rounded-2xl
+              border border-gray-200
+              bg-white px-5 py-4
+              text-sm outline-none
+              transition
+              focus:border-blue-500
+              focus:ring-4
+              focus:ring-blue-100
+            "
+          />
 
-      <div className="mt-4">
-        <input
-          className="input"
-          placeholder="Ex : alternance, hackathon, Annecy, forum, cybersécurité…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-        />
-      </div>
+          {/* RESULTS */}
 
-      {q.trim() && (
-        <div className="mt-4 space-y-2">
-          {results.length === 0 ? (
-            <div className="text-sm text-gray-600">Aucun résultat.</div>
-          ) : (
-            results.slice(0, 6).map((r) => (
-              <Link key={`${r.kind}-${r.id}`} href={r.href} className="block">
-                <div className="rounded-2xl border border-white/60 bg-white/60 p-4 hover:bg-white transition">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="font-bold">{r.title}</div>
-                    <Badge tone={r.kind === "offres" ? "orange" : r.kind === "evenements" ? "green" : "blue"}>
-                      {r.kind}
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">{r.subtitle}</div>
-                  {r.date ? <div className="text-xs text-gray-500 mt-2">Date : {r.date}</div> : null}
+          {query.trim() && (
+
+            <div
+              className="
+                absolute left-0 top-full
+                z-9999
+                mt-3 w-full
+                rounded-3xl border
+                border-gray-100
+                bg-white shadow-2xl
+                overflow-hidden
+              "
+            >
+
+              {loading ? (
+
+                <div className="p-5 text-gray-500">
+                  Chargement...
                 </div>
-              </Link>
-            ))
+
+              ) : results.length > 0 ? (
+
+                <div className="divide-y">
+
+                  {results.map((item) => (
+
+                    <Link
+                      key={item.id_contenu}
+                      href={getLink(item)}
+                      className="
+                        block p-5
+                        hover:bg-gray-50
+                        transition
+                        cursor-pointer
+                      "
+                    >
+
+                      <div className="flex items-center gap-3">
+
+                        <Badge
+                          tone={
+                            getBadgeTone(item.type) as never
+                          }
+                        >
+                          {item.type}
+                        </Badge>
+
+                        <div className="font-bold">
+                          {item.titre}
+                        </div>
+
+                      </div>
+
+                      <div
+                        className="
+                          mt-2 text-sm
+                          text-gray-600
+                          line-clamp-2
+                        "
+                      >
+                        {item.message}
+                      </div>
+
+                    </Link>
+
+                  ))}
+
+                </div>
+
+              ) : (
+
+                <div className="p-5 text-gray-500">
+
+                  Aucun résultat.
+
+                </div>
+
+              )}
+
+            </div>
+
           )}
 
-          {results.length > 6 ? (
-            <div className="text-xs text-gray-500">
-              {results.length} résultats trouvés (affichage des 6 premiers).
-            </div>
-          ) : null}
         </div>
-      )}
+
+      </div>
+
     </Card>
+
   );
+
 }

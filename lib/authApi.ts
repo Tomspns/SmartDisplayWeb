@@ -5,38 +5,47 @@ import { apiFetch } from "./api";
 // =============================
 
 export type User = {
+
   id_user: number;
+
   nom: string;
+
   prenom: string;
+
   email: string;
 
   id_role: number;
 
-  // 🔥 NOUVEAU
   date_naissance?: string;
+
   numero_telephone?: string;
+
 };
 
 export type Annonce = {
+
   id_contenu: number;
 
   titre: string;
 
   message: string;
 
-  type: string;
+  type:
+    | "actualite"
+    | "offre"
+    | "evenement";
 
   date_debut: string;
 
   date_fin?: string;
 
   nom?: string;
+
   prenom?: string;
 
-  // 🔥 FUTUR QR / LIENS
   lien?: string;
-};
 
+};
 
 // =============================
 // EMPLOIS DU TEMPS
@@ -61,17 +70,18 @@ export type Emploi = {
   salle?: string;
 
   couleur?: string;
-};
 
+};
 
 // =============================
 // REPONSES API
 // =============================
 
 export type MeResponse = {
-  user: User;
-};
 
+  user: User;
+
+};
 
 // =============================
 // AUTH
@@ -94,12 +104,14 @@ export async function register(input: {
 }) {
 
   return apiFetch("/auth/register", {
+
     method: "POST",
+
     body: JSON.stringify(input),
+
   });
 
 }
-
 
 // =============================
 // LOGIN
@@ -113,7 +125,9 @@ export async function login(input: {
 
 }) {
 
-  const res = await apiFetch<{ token: string }>(
+  const res = await apiFetch<{
+    token: string;
+  }>(
     "/auth/login",
     {
       method: "POST",
@@ -121,11 +135,14 @@ export async function login(input: {
     }
   );
 
-  localStorage.setItem("token", res.token);
+  localStorage.setItem(
+    "token",
+    res.token
+  );
 
   return res;
-}
 
+}
 
 // =============================
 // PROFIL CONNECTÉ
@@ -134,11 +151,12 @@ export async function login(input: {
 export async function me(): Promise<MeResponse> {
 
   return apiFetch("/me", {
+
     method: "GET",
+
   });
 
 }
-
 
 // =============================
 // LOGOUT
@@ -149,11 +167,12 @@ export async function logout() {
   localStorage.removeItem("token");
 
   return apiFetch("/auth/logout", {
+
     method: "POST",
+
   });
 
 }
-
 
 // =============================
 // UPDATE PROFIL
@@ -183,7 +202,6 @@ export async function updateProfile(data: {
 
 }
 
-
 // =============================
 // ANNONCES
 // =============================
@@ -191,17 +209,20 @@ export async function updateProfile(data: {
 export async function getAnnonces(): Promise<Annonce[]> {
 
   return apiFetch("/annonces", {
+
     method: "GET",
+
   });
 
 }
-
 
 // =============================
 // DELETE CONTENU
 // =============================
 
-export async function deleteContenu(id: number) {
+export async function deleteContenu(
+  id: number
+) {
 
   return apiFetch(`/contenus/${id}`, {
 
@@ -210,7 +231,6 @@ export async function deleteContenu(id: number) {
   });
 
 }
-
 
 // =============================
 // EMPLOIS DU TEMPS
@@ -226,7 +246,6 @@ export async function getEmplois(): Promise<Emploi[]> {
 
 }
 
-
 export async function getEmploisClasse(
   classe: string
 ): Promise<Emploi[]> {
@@ -238,7 +257,6 @@ export async function getEmploisClasse(
   });
 
 }
-
 
 // =============================
 // CREATE EMPLOI
@@ -274,12 +292,13 @@ export async function createEmploi(data: {
 
 }
 
-
 // =============================
 // DELETE EMPLOI
 // =============================
 
-export async function deleteEmploi(id: number) {
+export async function deleteEmploi(
+  id: number
+) {
 
   return apiFetch(`/emplois/${id}`, {
 

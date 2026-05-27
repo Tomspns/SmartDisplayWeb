@@ -116,7 +116,7 @@ export default function VerificationPage() {
             </p>
 
             <Link
-              href="/login"
+              href="/connexion"
               className="
                 inline-flex items-center justify-center
                 rounded-2xl px-6 py-3
@@ -151,7 +151,7 @@ export default function VerificationPage() {
             </p>
 
             <Link
-              href="/register"
+              href="/inscription"
               className="
                 inline-flex items-center justify-center
                 rounded-2xl px-6 py-3

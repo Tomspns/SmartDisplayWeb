@@ -12,7 +12,7 @@ export default function OffresPage() {
 
   useEffect(() => {
     getAnnonces().then((d) =>
-      setData(d.filter((a) => a.type === "alerte"))
+      setData(d.filter((a) => a.type === "offre"))
     );
   }, []);
 
