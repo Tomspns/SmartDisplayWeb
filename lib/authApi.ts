@@ -5,7 +5,6 @@ import { apiFetch } from "./api";
 // =============================
 
 export type User = {
-
   id_user: number;
 
   nom: string;
@@ -19,11 +18,9 @@ export type User = {
   date_naissance?: string;
 
   numero_telephone?: string;
-
 };
 
 export type Annonce = {
-
   id_contenu: number;
 
   titre: string;
@@ -44,15 +41,9 @@ export type Annonce = {
   prenom?: string;
 
   lien?: string;
-
 };
 
-// =============================
-// EMPLOIS DU TEMPS
-// =============================
-
 export type Emploi = {
-
   id_edt: number;
 
   classe: string;
@@ -70,7 +61,6 @@ export type Emploi = {
   salle?: string;
 
   couleur?: string;
-
 };
 
 // =============================
@@ -78,9 +68,11 @@ export type Emploi = {
 // =============================
 
 export type MeResponse = {
-
   user: User;
+};
 
+export type UsersResponse = {
+  users: User[];
 };
 
 // =============================
@@ -88,29 +80,17 @@ export type MeResponse = {
 // =============================
 
 export async function register(input: {
-
   nom: string;
-
   prenom: string;
-
   dateNaissance: string;
-
   email: string;
-
   password: string;
-
   telephone?: string;
-
 }) {
-
   return apiFetch("/auth/register", {
-
     method: "POST",
-
     body: JSON.stringify(input),
-
   });
-
 }
 
 // =============================
@@ -118,16 +98,10 @@ export async function register(input: {
 // =============================
 
 export async function login(input: {
-
   email: string;
-
   password: string;
-
 }) {
-
-  const res = await apiFetch<{
-    token: string;
-  }>(
+  const res = await apiFetch<{ token: string }>(
     "/auth/login",
     {
       method: "POST",
@@ -141,7 +115,6 @@ export async function login(input: {
   );
 
   return res;
-
 }
 
 // =============================
@@ -149,13 +122,9 @@ export async function login(input: {
 // =============================
 
 export async function me(): Promise<MeResponse> {
-
   return apiFetch("/me", {
-
     method: "GET",
-
   });
-
 }
 
 // =============================
@@ -163,15 +132,11 @@ export async function me(): Promise<MeResponse> {
 // =============================
 
 export async function logout() {
-
   localStorage.removeItem("token");
 
   return apiFetch("/auth/logout", {
-
     method: "POST",
-
   });
-
 }
 
 // =============================
@@ -179,27 +144,49 @@ export async function logout() {
 // =============================
 
 export async function updateProfile(data: {
-
   nom: string;
-
   prenom: string;
-
   email: string;
-
   telephone?: string;
-
   dateNaissance?: string;
-
 }) {
-
   return apiFetch("/users/me", {
-
     method: "PUT",
-
     body: JSON.stringify(data),
-
   });
+}
 
+// =============================
+// ADMIN USERS
+// =============================
+
+export async function getUsers(): Promise<UsersResponse> {
+  return apiFetch("/users", {
+    method: "GET",
+  });
+}
+
+export async function updateUser(
+  id: number,
+  data: {
+    nom: string;
+    prenom: string;
+    email: string;
+    id_role: number;
+  }
+) {
+  return apiFetch(`/users/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteUser(
+  id: number
+) {
+  return apiFetch(`/users/${id}`, {
+    method: "DELETE",
+  });
 }
 
 // =============================
@@ -207,29 +194,17 @@ export async function updateProfile(data: {
 // =============================
 
 export async function getAnnonces(): Promise<Annonce[]> {
-
   return apiFetch("/annonces", {
-
     method: "GET",
-
   });
-
 }
-
-// =============================
-// DELETE CONTENU
-// =============================
 
 export async function deleteContenu(
   id: number
 ) {
-
   return apiFetch(`/contenus/${id}`, {
-
     method: "DELETE",
-
   });
-
 }
 
 // =============================
@@ -237,25 +212,17 @@ export async function deleteContenu(
 // =============================
 
 export async function getEmplois(): Promise<Emploi[]> {
-
   return apiFetch("/emplois", {
-
     method: "GET",
-
   });
-
 }
 
 export async function getEmploisClasse(
   classe: string
 ): Promise<Emploi[]> {
-
   return apiFetch(`/emplois/${classe}`, {
-
     method: "GET",
-
   });
-
 }
 
 // =============================
@@ -263,33 +230,19 @@ export async function getEmploisClasse(
 // =============================
 
 export async function createEmploi(data: {
-
   classe: string;
-
   jour: string;
-
   heure_debut: string;
-
   heure_fin: string;
-
   matiere: string;
-
   professeur?: string;
-
   salle?: string;
-
   couleur?: string;
-
 }) {
-
   return apiFetch("/emplois", {
-
     method: "POST",
-
     body: JSON.stringify(data),
-
   });
-
 }
 
 // =============================
@@ -299,11 +252,7 @@ export async function createEmploi(data: {
 export async function deleteEmploi(
   id: number
 ) {
-
   return apiFetch(`/emplois/${id}`, {
-
     method: "DELETE",
-
   });
-
 }
