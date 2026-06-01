@@ -15,9 +15,9 @@ export type User = {
 
   id_role: number;
 
-  date_naissance?: string;
+  dateNaissance?: string;
 
-  numero_telephone?: string;
+  telephone?: string;
 };
 
 export type Annonce = {

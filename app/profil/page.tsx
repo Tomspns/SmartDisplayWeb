@@ -40,8 +40,8 @@ export default function ProfilPage() {
             nom: data.user.nom || "",
             prenom: data.user.prenom || "",
             email: data.user.email || "",
-            telephone: data.user.numero_telephone || "",
-            dateNaissance: data.user.date_naissance || "",
+            telephone: data.user.telephone || "",
+            dateNaissance: data.user.dateNaissance || "",
           });
         } else {
           r.push("/connexion");
