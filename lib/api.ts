@@ -1,4 +1,6 @@
-const API_URL = "http://20.19.169.91:8080";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://smartdisplayapi.duckdns.org";
 
 export async function apiFetch<T = unknown>(
   path: string,
