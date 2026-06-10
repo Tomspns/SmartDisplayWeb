@@ -15,7 +15,7 @@ export default function CreateAnnoncePage() {
   const [message, setMessage] = useState("");
   const [categorie, setCategorie] = useState("");
   const [date, setDate] = useState("");
-
+  const [lien, setLien] = useState("");
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -33,7 +33,8 @@ export default function CreateAnnoncePage() {
           titre,
           message,
           categorie,
-          date_debut: date || null
+          date_debut: date || null,
+          lien: lien || null,
         }),
       });
 
@@ -120,6 +121,20 @@ export default function CreateAnnoncePage() {
               <input
                 value={categorie}
                 onChange={(e) => setCategorie(e.target.value)}
+                className="w-full border rounded-xl p-3 bg-gray-50"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-1">
+                Lien externe
+              </label>
+
+              <input
+                type="url"
+                value={lien}
+                onChange={(e) => setLien(e.target.value)}
+                placeholder="https://..."
                 className="w-full border rounded-xl p-3 bg-gray-50"
               />
             </div>

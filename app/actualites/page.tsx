@@ -144,7 +144,7 @@ export default function ActualitesPage() {
 
       {/* ADMIN */}
 
-      {user?.id_role === 1 && (
+      {user?.id_role === 3 && (
 
         <div className="flex justify-end mb-4">
 
