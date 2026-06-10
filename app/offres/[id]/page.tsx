@@ -9,6 +9,7 @@ import { apiFetch } from "@/lib/api";
 import { Annonce } from "@/lib/authApi";
 
 import DeleteButton from "./DeleteButton";
+import Image from "next/image";
 
 type Params = {
   id: string;
@@ -100,27 +101,76 @@ export default async function Page({
       </div>
 
       <Card
-        className="
-          rounded-2xl border
-          border-orange-100
-          bg-white p-6
-          shadow-xl md:p-8
-        "
-      >
+  className="
+    rounded-2xl border
+    border-orange-100
+    bg-white p-6
+    shadow-xl md:p-8
+  "
+>
 
-        <p
-          className="
-            whitespace-pre-line
-            text-lg leading-relaxed
-            text-gray-700
-          "
-        >
+  <p
+    className="
+      whitespace-pre-line
+      text-lg leading-relaxed
+      text-gray-700
+    "
+  >
+    {annonce.message}
+  </p>
 
-          {annonce.message}
+  {annonce.lien && (
 
-        </p>
+  <div className="mt-8">
 
-      </Card>
+    <h3
+      className="
+        mb-4 text-lg
+        font-semibold
+        text-gray-900
+      "
+    >
+      Consulter l&apos;offre
+    </h3>
+
+    <a
+      href={annonce.lien}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="
+        inline-flex items-center
+        rounded-xl
+        bg-orange-600
+        px-5 py-3
+        font-medium
+        text-white
+        transition
+        hover:bg-orange-700
+      "
+    >
+      Ouvrir l&apos;offre
+    </a>
+
+    <div className="mt-6">
+
+      <img
+  src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+    annonce.lien
+  )}`}
+  alt="QR Code"
+/>
+
+    </div>
+
+    <p className="mt-3 text-sm text-gray-500">
+      Scannez le QR Code avec votre téléphone
+    </p>
+
+  </div>
+
+)}
+
+</Card>
 
     </PageLayout>
 

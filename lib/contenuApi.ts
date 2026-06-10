@@ -7,6 +7,7 @@ export type Contenu = {
   type:string
   date_debut:string
   date_fin:string
+  lien:string |null
 }
 
 export async function getContenus(){
@@ -21,6 +22,7 @@ export async function createContenu(data:{
   type:string
   date_debut:string
   date_fin:string
+  lien:string |null
 }){
 
   return apiFetch("/contenus",{
