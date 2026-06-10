@@ -10,7 +10,7 @@ import { apiFetch } from "@/lib/api";
 export default function CreateAnnoncePage() {
   const router = useRouter();
 
-  const [type, setType] = useState("info");
+  const [type, setType] = useState("actualite");
   const [titre, setTitre] = useState("");
   const [message, setMessage] = useState("");
   const [categorie, setCategorie] = useState("");
@@ -77,8 +77,8 @@ export default function CreateAnnoncePage() {
                 onChange={(e) => setType(e.target.value)}
                 className="w-full border rounded-xl p-3 bg-gray-50"
               >
-                <option value="info">Actualité</option>
-                <option value="alerte">Offre</option>
+                <option value="actualite">Actualité</option>
+                <option value="offre">Offre</option>
                 <option value="evenement">Événement</option>
               </select>
             </div>
