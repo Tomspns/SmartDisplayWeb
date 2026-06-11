@@ -1,4 +1,3 @@
-// @ts-ignore: CSS imports are handled by Next.js and do not need explicit type declarations here.
 import "./globals.css";
 
 import Link from "next/link";
@@ -157,7 +156,7 @@ export default function RootLayout({
               overflow-x-auto
             "
           >
-            <div className="flex min-w-max gap-2 p-3">
+            <div className="flex flex-wrap gap-2 p-3 justify-center">
               {navLinks.map((l) => (
                 <NavLink
                   key={l.href}
