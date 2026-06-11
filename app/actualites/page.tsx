@@ -185,8 +185,11 @@ export default function ActualitesPage() {
 
               <div
                 className="
-                  flex justify-between
-                  items-start gap-4
+                  flex flex-col
+                  sm:flex-row
+                  justify-between
+                  items-start
+                  gap-4
                 "
               >
 

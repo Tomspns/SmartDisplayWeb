@@ -1,3 +1,4 @@
+// @ts-ignore: CSS imports are handled by Next.js and do not need explicit type declarations here.
 import "./globals.css";
 
 import Link from "next/link";
@@ -145,6 +146,28 @@ export default function RootLayout({
 
           </header>
 
+          <div
+            className="
+              md:hidden
+              sticky top-18.25
+              z-40
+              bg-white/80
+              backdrop-blur-xl
+              border-b
+              overflow-x-auto
+            "
+          >
+            <div className="flex min-w-max gap-2 p-3">
+              {navLinks.map((l) => (
+                <NavLink
+                  key={l.href}
+                  href={l.href}
+                  label={l.label}
+                />
+              ))}
+            </div>
+          </div>
+
           {/* CONTENU */}
 
           <div
@@ -176,7 +199,7 @@ export default function RootLayout({
 
               <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
 
-                <div>
+                <div className="max-w-full wrap-break-word">
                   SmartDisplay — Campus • Actualités • Offres • Événements • Emplois du temps
                 </div>
 
@@ -193,7 +216,7 @@ export default function RootLayout({
           {/* TOAST */}
 
           <Toaster
-            position="top-right"
+            position="top-center"
             gutter={12}
             containerStyle={{
               top: 80,

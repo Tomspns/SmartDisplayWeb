@@ -33,7 +33,17 @@ export default function AuthNav() {
           Profil
         </Link>
 
-        <span className="hidden md:flex items-center gap-2 text-sm font-semibold text-gray-700">
+        <span
+          className="
+            hidden lg:flex
+            items-center gap-2
+            text-sm
+            font-semibold
+            text-gray-700
+            max-w-55
+            truncate
+          "
+        >
           {user.email}
         </span>
 
