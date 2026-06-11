@@ -235,7 +235,6 @@ export default function ActualitesPage() {
                 >
 
                   <FavoriteButton
-                    type="actualites"
                     id={a.id_contenu}
                   />
 

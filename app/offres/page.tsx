@@ -6,6 +6,7 @@ import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import Card from "@/components/Card";
 import Badge from "@/components/Badge";
+import FavoriteButton from "@/components/FavoriteButton";
 
 import {
   getAnnonces,
@@ -44,41 +45,52 @@ export default function OffresPage() {
 
             <Card>
 
-              <div className="flex gap-2 mb-2">
+              <div
+                className="
+                  flex justify-between
+                  items-start gap-4
+                "
+              >
 
-                <Badge tone="orange">
-                  Offre
-                </Badge>
+                <div className="flex-1">
 
-                <Badge tone="neutral">
+                  <div className="flex gap-2 mb-2">
 
-                  {o.date_debut
-                    ? new Date(
-                        o.date_debut
-                      ).toLocaleDateString()
-                    : "—"}
+                    <Badge tone="orange">
+                      Offre
+                    </Badge>
 
-                </Badge>
+                    <Badge tone="neutral">
+                      {o.date_debut
+                        ? new Date(
+                            o.date_debut
+                          ).toLocaleDateString()
+                        : "—"}
+                    </Badge>
+
+                  </div>
+
+                  <h2 className="font-bold text-lg">
+                    {o.titre}
+                  </h2>
+
+                  <p className="text-gray-600 mt-2">
+                    {o.message}
+                  </p>
+
+                </div>
+
+                <div
+                  onClick={(e) =>
+                    e.stopPropagation()
+                  }
+                >
+                  <FavoriteButton
+                    id={o.id_contenu}
+                  />
+                </div>
 
               </div>
-
-              <h2
-                className="
-                  font-bold
-                  text-lg
-                "
-              >
-                {o.titre}
-              </h2>
-
-              <p
-                className="
-                  text-gray-600
-                  mt-2
-                "
-              >
-                {o.message}
-              </p>
 
             </Card>
 

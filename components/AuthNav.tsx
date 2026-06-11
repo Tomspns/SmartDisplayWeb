@@ -27,6 +27,20 @@ export default function AuthNav() {
         )}
 
         <Link
+          href="/favoris"
+          className="
+            px-4 py-2 rounded-xl
+            text-sm font-semibold
+            bg-white/70
+            border border-white/70
+            hover:bg-white
+            transition
+          "
+        >
+          Favoris
+        </Link>
+
+        <Link
           href="/profil"
           className="px-4 py-2 rounded-xl text-sm font-semibold bg-white/70 border border-white/70 hover:bg-white transition"
         >

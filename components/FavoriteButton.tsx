@@ -1,61 +1,127 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 import {
-  FavoriteType,
-  getSessionEmail,
-  isFavorite,
-  toggleFavorite,
-} from "@/lib/mockAuth";
+  addFavorite,
+  removeFavorite,
+  getFavorites,
+} from "@/lib/favoriteApi";
+
+import { useAuth } from "@/lib/AuthContext";
+
+import { useRouter } from "next/navigation";
 
 export default function FavoriteButton({
-  type,
   id,
 }: {
-  type: FavoriteType;
   id: number;
 }) {
+
+  const { user } = useAuth();
+
   const router = useRouter();
 
-  // 🔥 récupération directe (pas de useEffect)
-  const email = getSessionEmail();
+  const [fav, setFav] =
+    useState(false);
 
-  const [fav, setFav] = useState(() => {
-    if (!email) return false;
-    return isFavorite(type, email, id);
-  });
+  const [loading, setLoading] =
+    useState(!!user);
 
-  // 🔴 utilisateur NON connecté
-  if (!email) {
-    return (
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          router.push("/connexion");
-        }}
-        className="px-3 py-2 text-xs rounded-xl bg-white border"
-      >
-        ☆ Favori
-      </button>
-    );
-  }
+  useEffect(() => {
 
-  function onToggle(e: React.MouseEvent) {
+    if (!user) {
+      return;
+    }
+
+    getFavorites()
+      .then((list) => {
+
+        setFav(
+          list.includes(id)
+        );
+
+      })
+      .catch(console.error)
+      .finally(() => {
+
+        setLoading(false);
+
+      });
+
+  }, [id, user]);
+
+  async function onToggle(
+    e: React.MouseEvent
+  ) {
+
+    e.preventDefault();
     e.stopPropagation();
 
-    // ✅ email garanti non null ici
-    toggleFavorite(type, email!, id);
+    if (!user) {
 
-    setFav((v) => !v);
+      router.push("/connexion");
+      return;
+
+    }
+
+    try {
+
+      if (fav) {
+
+        await removeFavorite(id);
+
+      } else {
+
+        await addFavorite(id);
+
+      }
+
+      setFav(!fav);
+
+    } catch (err) {
+
+      console.error(err);
+
+    }
+
+  }
+
+  if (loading) {
+
+    return (
+      <button
+        className="
+          px-3 py-2
+          text-xs
+          rounded-xl
+          bg-white
+          border
+        "
+      >
+        ...
+      </button>
+    );
+
   }
 
   return (
+
     <button
       onClick={onToggle}
-      className="px-3 py-2 text-xs rounded-xl bg-white border"
+      className="
+        px-3 py-2
+        text-xs
+        rounded-xl
+        bg-white
+        border
+      "
     >
-      {fav ? "★ Favori" : "☆ Favori"}
+      {fav
+        ? "★ Favori"
+        : "☆ Favori"}
     </button>
+
   );
+
 }

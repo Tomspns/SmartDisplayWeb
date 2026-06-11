@@ -1,78 +1,65 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import Button from "@/components/Button";
-import { getSessionEmail } from "@/lib/mockAuth";
+import { useAuth } from "@/lib/AuthContext";
 
-export default function ApplyButton({ offerId }: { offerId: number }) {
-  const [mounted, setMounted] = useState(false);
-  const [connected, setConnected] = useState(false);
+export default function ApplyButton({
+  offerId,
+}: {
+  offerId: number;
+}) {
 
-  useEffect(() => {
-    const init = () => {
-      setMounted(true);
-      try {
-        setConnected(!!getSessionEmail());
-      } catch {
-        setConnected(false);
-      }
-    };
+  const { user, loading } = useAuth();
 
-    const raf = requestAnimationFrame(init);
+  if (loading) {
 
-    const refresh = () => {
-      try {
-        setConnected(!!getSessionEmail());
-      } catch {
-        setConnected(false);
-      }
-    };
-
-    window.addEventListener("auth-change", refresh);
-    window.addEventListener("storage", refresh);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("auth-change", refresh);
-      window.removeEventListener("storage", refresh);
-    };
-  }, []);
-
-  // ✅ rendu stable SSR + 1er client
-  if (!mounted) {
     return (
       <span
         className="
-          inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
+          inline-flex items-center justify-center
+          rounded-2xl px-4 py-2 text-sm font-semibold
           bg-white/60 border border-white/60 text-gray-700
         "
-        aria-hidden="true"
       >
-        Postuler
+        Chargement...
       </span>
     );
+
   }
 
-  if (!connected) {
+  if (!user) {
+
     return (
       <Link
         href="/connexion"
         className="
-          inline-flex items-center justify-center rounded-2xl px-4 py-2 text-sm font-semibold
-          text-white bg-linear-to-br from-blue-600 to-purple-600 hover:brightness-110
-          transition active:scale-[0.98]
+          inline-flex items-center justify-center
+          rounded-2xl px-4 py-2 text-sm font-semibold
+          text-white
+          bg-linear-to-br
+          from-blue-600
+          to-purple-600
+          hover:brightness-110
+          transition
         "
-        title="Connecte-toi pour postuler"
       >
         Se connecter pour postuler
       </Link>
     );
+
   }
 
   return (
-    <Button onClick={() => alert(`Postuler à l’offre #${offerId} (à brancher plus tard)`)}>
+    <Button
+      onClick={() =>
+        alert(
+          `Postuler à l'offre #${offerId} (à implémenter)`
+        )
+      }
+    >
       Postuler
     </Button>
   );
+
 }
