@@ -15,7 +15,15 @@ export default function AuthNav() {
 
     return(
 
-      <div className="flex items-center gap-3">
+      <div
+        className="
+          flex items-center gap-3
+          overflow-x-auto
+          whitespace-nowrap
+          max-w-[55vw]
+          scrollbar-hide
+        "
+      >
 
         {user.id_role === 2 && (
           <Link
