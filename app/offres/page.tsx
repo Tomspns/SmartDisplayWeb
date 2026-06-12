@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 
 import PageLayout from "@/components/PageLayout";
@@ -18,6 +18,9 @@ export default function OffresPage() {
   const [data, setData] =
     useState<Annonce[]>([]);
 
+  const [query, setQuery] =
+    useState("");
+
   useEffect(() => {
 
     getAnnonces().then((d) =>
@@ -30,13 +33,49 @@ export default function OffresPage() {
 
   }, []);
 
+  const filtered = useMemo(() => {
+
+    const q = query.toLowerCase();
+
+    return data.filter((o) =>
+
+      o.titre.toLowerCase().includes(q)
+
+      ||
+
+      o.message.toLowerCase().includes(q)
+
+    );
+
+  }, [data, query]);
+
   return (
 
     <PageLayout title="Offres">
 
-      <div className="grid gap-4">
+      <Card className="p-6">
 
-        {data.map((o) => (
+        <input
+          type="text"
+          placeholder="Rechercher une offre..."
+          value={query}
+          onChange={(e) =>
+            setQuery(e.target.value)
+          }
+          className="
+            w-full
+            rounded-xl
+            border
+            border-gray-200
+            px-4 py-3
+          "
+        />
+
+      </Card>
+
+      <div className="grid gap-4 mt-4">
+
+        {filtered.map((o) => (
 
           <Link
             key={o.id_contenu}
