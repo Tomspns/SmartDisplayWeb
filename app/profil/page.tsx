@@ -26,6 +26,7 @@ export default function ProfilPage() {
     email: "",
     telephone: "",
     dateNaissance: "",
+    notifications_email: true,
   });
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export default function ProfilPage() {
             email: data.user.email || "",
             telephone: data.user.telephone || "",
             dateNaissance: data.user.dateNaissance || "",
+            notifications_email: data.user.notifications_email === 1,
           });
         } else {
           r.push("/connexion");
@@ -250,6 +252,23 @@ export default function ProfilPage() {
                       focus:ring-purple-500
                     "
                   />
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={form.notifications_email}
+                    onChange={(e) =>
+                      setForm({
+                        ...form,
+                        notifications_email: e.target.checked,
+                      })
+                    }
+                  />
+
+                  <label className="text-sm text-gray-700">
+                    Recevoir les notifications par email
+                  </label>
                 </div>
 
                 <div

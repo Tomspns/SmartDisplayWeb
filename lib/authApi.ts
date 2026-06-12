@@ -18,6 +18,8 @@ export type User = {
   dateNaissance?: string;
 
   telephone?: string;
+
+  notifications_email?: number;
 };
 
 export type Annonce = {
